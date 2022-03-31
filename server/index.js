@@ -64,7 +64,7 @@ app.get(`/data`, (_, res) => {
     dirTreeCallBack
   );
   console.log(tree.children);
-  res.json(tree.children ?? []);
+  res.json(tree.children || []);
 });
 
 /**
