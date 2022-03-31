@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const port = 7867
-app.use(express.static("data"));
+// const port = 7867
+
+require("dotenv").config(); // load configuration
+app.use(express.static(process.env.DATA_DIR)); // allow access to data resources
 
 // const cors = require("cors");
 // app.use(cors({ origin: "*", }));
@@ -11,6 +13,9 @@ const dirTree = require("directory-tree");
 const path = require("path");
 const fs = require("fs");
 
+/**
+ * @dev test api
+ */
 app.get("/test", (_, res) => {
   console.log("test request received");
   res.json([
@@ -36,21 +41,21 @@ app.get("/test", (_, res) => {
   ]);
 });
 
+/**
+ * @dev callback used to process information usefull for client application
+ */
 function dirTreeCallBack(item) {
   item.label = item.name;
-  if (item.type === 'directory') {
-    item.key = `#${item.path}`;
-    item.parent = true;
-    // item.icon = "Icons.folder";
-  } else {
-    item.parent = false;
-    item.key = `_${item.path}`;
-  }
+  item.key = `_${item.path}`;
+  item.parent = item.type === 'directory';
 }
 
-app.get("/data", (_, res) => {
+/**
+ * @dev return a directory structure tree
+ */
+app.get(`/data`, (_, res) => {
   const tree = dirTree(
-    "data",
+    process.env.DATA_DIR,
     {
       attributes: ["size", "type", "extension"],
       extensions: /\.(md|png|jpg)$/
@@ -59,9 +64,12 @@ app.get("/data", (_, res) => {
     dirTreeCallBack
   );
   console.log(tree.children);
-  res.json(tree.children);
+  res.json(tree.children ?? []);
 });
 
+/**
+ * @deprecated
+ */
 app.get("/api/v1/data", (req, res) => {
   const _path = req.query.path;
   console.log(_path);
@@ -72,7 +80,9 @@ app.get("/api/v1/data", (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Listen on port ${port}`);
+/**
+ * @dev run application
+ */
+app.listen(process.env.PORT, () => {
+  console.log(`Listen on port ${process.env.PORT}`);
 });
-
