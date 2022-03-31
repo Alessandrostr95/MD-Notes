@@ -10,6 +10,23 @@ import '../utility.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Home page of application.\
+/// Load the data from server, and shows the tree directory.
+/// 
+/// Selecting the folder nodes, they will collapse or expands.\
+/// Selecting files, the application will renderes them in a new page.
+/// 
+/// It is also possible to:
+/// - re-fetch data.
+/// - change settings of server interface (url and port).
+/// - toggle dark and light theme.
+/// 
+/// Supported file extensions are:
+/// - `.md`
+/// - `.png`
+/// - `.jpg`
+/// 
+/// New file supports and features will come soon.
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -24,6 +41,8 @@ class _HomePageState extends State<HomePage> {
   late TreeViewController _treeViewController;
   String? _selectedNode;
 
+  /// Initialize state of HomePage.
+  /// First initialize the `_treeViewController` variable, than start to fetch data.
   @override
   void initState() {
     _treeViewController = TreeViewController();
@@ -31,6 +50,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  /// Async function that read shared preferences.
   Future<Map> _loadSettings() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String? url = _prefs.getString("url");
@@ -41,12 +61,19 @@ class _HomePageState extends State<HomePage> {
     };
   }
 
+  /// Async function that write shared preferences.
   Future<void> _updateSettings(String url, int port) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString("url", url);
     _prefs.setInt("port", port);
   }
 
+  /// Async function that fetch data from server.\
+  /// First try to load *shared preferences*.\
+  /// If they don't exist, than open **SettingsPage** to set `url` and `port` of server service.
+  /// 
+  /// When data fetched, set the new `_treeViewController`.\
+  /// If errors occur, show a **SnackBar** notification of error.
   Future<void> _fetchData() async {
     final _loadedData = await _loadSettings();
     String? url = _loadedData["url"];
@@ -65,11 +92,30 @@ class _HomePageState extends State<HomePage> {
         // _treeViewController = _treeViewController.loadJSON(json: value.body);
         _treeViewController = _treeViewController.copyWith(children: jsonString2nodesTree(value.body));
       });
+    }).onError((error, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Ops! Something went wrong. Try later..."),
+          backgroundColor: Colors.red,
+          dismissDirection: DismissDirection.horizontal,
+          behavior: SnackBarBehavior.floating,
+          elevation: 20,
+        )
+      );
     });
   }
 
+  /// Handler for node tapping.
+  /// 
+  /// First set the current selected node.\
+  /// Than opern a new page showing the file selected, depending of the file *extension*.
+  /// 
+  /// Currently file types supported:
+  /// - `.md`
+  /// - `.png`
+  /// - `.jpg`
   void _onNodeTap(String key) {
-    print("KEY $key");
+    print("Node tapped -> $key");
     _selectedNode = key;
     setState(() {
       _treeViewController = _treeViewController.copyWith(selectedKey: _selectedNode);
@@ -82,7 +128,7 @@ class _HomePageState extends State<HomePage> {
     if(_extension == ".md"){
       //http.get(Uri.parse("http://localhost:7867/api/v1/data/?path=$_path")).then((value) {
       http.get(Uri.parse("$URL/$_path")).then((value) {
-        print("get -> ${value.body}");
+        // print("get -> ${value.body}");
         Navigator.pushNamed(
           context,
           MarkDownPage.PATH,
@@ -99,11 +145,10 @@ class _HomePageState extends State<HomePage> {
         ImagePage.PATH,
         arguments: {"uri": "$URL/$_path"}
       ); 
-    } else {
-      print("NIENTE");
     }
   }
 
+  /// Handler thath expands the *directory* nodes when tapped, toggling *closed* and *opened* folder icon. 
   void _expandNode(String key, bool expanded) {
     Node _node = _treeViewController.getNode(key)!;
     setState(() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-
+/// `ImagePage` renders the image file selected by user. 
 class ImagePage extends StatelessWidget {
   const ImagePage({ Key? key }) : super(key: key);
   static String PATH = "/image";
@@ -19,4 +19,3 @@ class ImagePage extends StatelessWidget {
     );
   }
 }
-

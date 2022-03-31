@@ -3,9 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 
-/**
- * Funzione che data una JsonString, ritorna un albero di nodi
- */
+/// Given a JsonString, returns a tree of `Node` objects.\\
+/// It works recursively.
 List<Node> jsonString2nodesTree(String json){
   final List tree = jsonDecode(json);
 
@@ -29,7 +28,7 @@ List<Node> jsonString2nodesTree(String json){
   }).toList();
 }
 
-
+// Return the icon in according to a giveng *extension*.
 IconData? _getIconFromExtension(String extension) {
   switch (extension) {
     case ".png":
@@ -42,6 +41,5 @@ IconData? _getIconFromExtension(String extension) {
       return null;
   }
 }
-
 
 const String URL = "http://10.0.2.2:7867";

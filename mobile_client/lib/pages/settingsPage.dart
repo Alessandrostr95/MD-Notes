@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// The setting page to configure the application.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({ Key? key }) : super(key: key);
   static String PATH = "/settings";
@@ -11,9 +12,10 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _urlController = TextEditingController();
-  TextEditingController _portController = TextEditingController();
+  final TextEditingController _urlController = TextEditingController();
+  final TextEditingController _portController = TextEditingController();
 
+  /// Asnyc function that load shared preferences if exists.
   Future<void> _loadSettings() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String? url = _prefs.getString("url");

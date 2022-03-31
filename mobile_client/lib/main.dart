@@ -11,6 +11,7 @@ void main() {
   runApp(const MyApp());
 }
 
+/// Main page that starts the application.
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
