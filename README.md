@@ -68,6 +68,12 @@ cd server
 npm i
 ```
 
+If you have not modified the `.env` file (as mentioned in the previous section), create a folder called `data` in which to place your files you wish to share
+
+```bash
+mkdir data
+```
+
 Now install the last dependency `forever`, a simple CLI that allows you to run scripts continuously as a deamon.
 
 ```bash
@@ -80,7 +86,7 @@ Now start the server process with the following command
 forever start index.js
 ```
 
-**NOTE:** if you prefer, you can use an other tool to run the server application.
+**NOTE:** if you prefer, you can use an other tool to run the server application as a deamon process.
 
 * * *
 
