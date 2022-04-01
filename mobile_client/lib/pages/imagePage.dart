@@ -12,6 +12,8 @@ class ImagePage extends StatelessWidget {
     final Map args = ModalRoute.of(context)!.settings.arguments as Map;
     final String _uri = args["uri"];
 
+    print("URI -> $_uri");
+
     return SafeArea(
       child: PhotoView(
         imageProvider: NetworkImage(_uri),

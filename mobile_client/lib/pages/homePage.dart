@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
     final _URL = "$url:$port";
 
     http.get(Uri.parse("$_URL/data")).then((value) {
+      print("BDOY - ${value.body}");
       setState(() {
         // _treeViewController = _treeViewController.loadJSON(json: value.body);
         _treeViewController = _treeViewController.copyWith(children: jsonString2nodesTree(value.body));
@@ -114,7 +115,7 @@ class _HomePageState extends State<HomePage> {
   /// - `.md`
   /// - `.png`
   /// - `.jpg`
-  void _onNodeTap(String key) {
+  void _onNodeTap(String key) async {
     print("Node tapped -> $key");
     _selectedNode = key;
     setState(() {
@@ -125,9 +126,14 @@ class _HomePageState extends State<HomePage> {
     final String _path = _node!.data["path"].substring(5);
     final String _extension =_node.data["extension"];
 
+    final _loadedData = await _loadSettings();
+    String? url = _loadedData["url"];
+    int? port = _loadedData["port"];
+    final _URL = "${url!}:${port!}";
+
     if(_extension == ".md"){
       //http.get(Uri.parse("http://localhost:7867/api/v1/data/?path=$_path")).then((value) {
-      http.get(Uri.parse("$URL/$_path")).then((value) {
+      http.get(Uri.parse("$_URL/$_path")).then((value) {
         // print("get -> ${value.body}");
         Navigator.pushNamed(
           context,
@@ -143,8 +149,8 @@ class _HomePageState extends State<HomePage> {
       Navigator.pushNamed(
         context,
         ImagePage.PATH,
-        arguments: {"uri": "$URL/$_path"}
-      ); 
+        arguments: {"uri": "$_URL/$_path"}
+      );
     }
   }
 
@@ -176,7 +182,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(onPressed: _fetchData, icon: const Icon(Icons.get_app)),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () async {
               final data = await Navigator.pushNamed(context, SettingsPage.PATH) as Map;
               String url = data["url"];

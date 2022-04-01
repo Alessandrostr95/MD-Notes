@@ -47,3 +47,5 @@ app.*.map.json
 
 /lib/prova.dart
 /lib/states.dart
+
+/request.rest
