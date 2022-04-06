@@ -1,0 +1,1 @@
+- <2022-04-06> v1.1.0: added refresh indicator for fetching data when pull down the home page.

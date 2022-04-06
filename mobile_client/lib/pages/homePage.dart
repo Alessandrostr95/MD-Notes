@@ -73,7 +73,8 @@ class _HomePageState extends State<HomePage> {
   /// If they don't exist, than open **SettingsPage** to set `url` and `port` of server service.
   /// 
   /// When data fetched, set the new `_treeViewController`.\
-  /// If errors occur, show a **SnackBar** notification of error.
+  /// After 5 seconds, displays a **SnackBar** notifying the user that the server is probabily down.
+  /// If errors occur, shows a **SnackBar** notification of error.
   Future<void> _fetchData() async {
     final _loadedData = await _loadSettings();
     String? url = _loadedData["url"];
@@ -87,23 +88,40 @@ class _HomePageState extends State<HomePage> {
     }
     final _URL = "$url:$port";
 
-    http.get(Uri.parse("$_URL/data")).then((value) {
-      print("BDOY - ${value.body}");
+    await http.get(Uri.parse("$_URL/data")).then((value) {
+      print("BODY -> ${value.body}");
       setState(() {
         // _treeViewController = _treeViewController.loadJSON(json: value.body);
         _treeViewController = _treeViewController.copyWith(children: jsonString2nodesTree(value.body));
       });
-    }).onError((error, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Ops! Something went wrong. Try later..."),
-          backgroundColor: Colors.red,
-          dismissDirection: DismissDirection.horizontal,
-          behavior: SnackBarBehavior.floating,
-          elevation: 20,
-        )
-      );
+    }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        _errorNotification(
+          msg: "Waiting time too long. The server might be down, unreachable or bad.",
+          backgroundColor: Colors.orange
+        );
+      }
+    ).onError((error, stackTrace) {
+      // quando chiama il timeout dopo un po' richiama anche l'errore se accade
+      _errorNotification();
     });
+  }
+
+  /// Shows a snackbar that notify an error message.
+  void _errorNotification({
+    String msg = "Ops! Something went wrong. Try later...",
+    Color backgroundColor = Colors.red
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: backgroundColor,
+        dismissDirection: DismissDirection.horizontal,
+        behavior: SnackBarBehavior.floating,
+        elevation: 20,
+      )
+    );
   }
 
   /// Handler for node tapping.
@@ -194,10 +212,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Center(
-        child: Container(
-          // height: MediaQuery.of(context).size.height*.6,
-          // width: MediaQuery.of(context).size.width*.8,
-          //padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        child: RefreshIndicator(
+          onRefresh: _fetchData,
           child: TreeView(
             controller: _treeViewController,
             allowParentSelect: false,

@@ -97,6 +97,7 @@ forever start index.js
 ## Future Features
 
 - [x] add app icon logo.
+- [x] add refresh indicator when fetch data.
 - [ ] others file extensions support.
 - [ ] security layer with login.
 - [ ] edit mode for file editing.
