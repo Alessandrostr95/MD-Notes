@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 // const port = 7867
+app.use(express.json());
 
 require("dotenv").config(); // load configuration
 app.use(express.static(process.env.DATA_DIR)); // allow access to data resources
@@ -78,6 +79,35 @@ app.get("/api/v1/data", (req, res) => {
     status: true,
     data: _file
   });
+});
+
+app.post("/data/save", (req, res) => {
+  const _data = req.body || {};
+  try {
+    fs.writeFileSync(path.join(__dirname, `data/${_data.path}`), _data.data);
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
+
+app.post("/data/update", (req, res) => {
+  const _data = req.body || {};
+
+  try {
+    const _path = path.join(__dirname, `data/${_data.path}`);
+    if (fs.existsSync(_path)) {
+      fs.writeFileSync(_path, _data.data);
+      res.sendStatus(200);
+    } else {
+      res.status(400).json({
+        "message": "this file does not exist.",
+        "path": _path
+      });
+    }
+  } catch (error) {
+    res.status(400).json(error);
+  }
 });
 
 /**
