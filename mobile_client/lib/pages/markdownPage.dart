@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'markdownEditorPage.dart';
 
 /// `MarkDownPage` renders the markdown file selected by user. 
 class MarkDownPage extends StatelessWidget {
   const MarkDownPage({ Key? key}) : super(key: key);
   static String PATH = "/notes";
+
+  void _openEditor() async {
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +30,18 @@ class MarkDownPage extends StatelessWidget {
         child: Markdown(
           data: data,
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.popAndPushNamed(
+          context,
+          MarkdownEditorPage.PATH,
+          arguments: {
+            "data": data,
+            "path": path,
+            "doUpdate": true
+          }
+        ),
+        child: const Icon(Icons.edit),
       ),
     );
   }

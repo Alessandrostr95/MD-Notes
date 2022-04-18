@@ -5,6 +5,7 @@ import 'pages/markdownPage.dart';
 import 'pages/imagePage.dart';
 import 'pages/homePage.dart';
 import 'pages/settingsPage.dart';
+import 'pages/markdownEditorPage.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 void main() {
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
           "/": (context) => const HomePage(title: "MD Notes"),
           MarkDownPage.PATH: (context) => const MarkDownPage(),
           ImagePage.PATH: (context) => const ImagePage(),
-          SettingsPage.PATH: (context) => const SettingsPage()
+          SettingsPage.PATH: (context) => const SettingsPage(),
+          MarkdownEditorPage.PATH: (context) => const MarkdownEditorPage(),
         },
       ),
     );

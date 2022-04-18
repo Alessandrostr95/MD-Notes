@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
           arguments: {
             "path": _path,
             // "data": jsonDecode(value.body)["data"]
-            "data": value.body
+            "data": value.body,
           }
         );
       });
